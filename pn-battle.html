@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PN Battle ⚡ — yuu Rewards Club</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f4f3fb;
+      min-height: 100vh;
+      color: #111;
+    }
+
+    /* ───── SPLASH ───── */
+    #screen-splash {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(145deg, #4f46e5 0%, #7c3aed 55%, #a855f7 100%);
+      padding: 24px;
+    }
+
+    .splash-card {
+      background: #fff;
+      border-radius: 28px;
+      padding: 48px 40px 44px;
+      max-width: 540px;
+      width: 100%;
+      box-shadow: 0 32px 80px rgba(79,70,229,.3);
+      text-align: center;
+    }
+
+    .splash-logo { font-size: 60px; display: block; margin-bottom: 10px; line-height: 1; }
+
+    .splash-badge {
+      display: inline-block;
+      background: linear-gradient(135deg,#4f46e5,#7c3aed);
+      color: #fff;
+      border-radius: 20px;
+      padding: 4px 18px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .splash-title {
+      font-size: 38px;
+      font-weight: 900;
+      color: #111;
+      margin-bottom: 14px;
+      line-height: 1.15;
+    }
+
+    .splash-sub {
+      color: #666;
+      font-size: 15.5px;
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .rules-box {
+      background: #f8f7ff;
+      border: 1.5px solid #e9e6ff;
+      border-radius: 18px;
+      padding: 22px 24px;
+      margin-bottom: 30px;
+      text-align: left;
+    }
+
+    .rules-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #7c3aed;
+      margin-bottom: 14px;
+    }
+
+    .rules-list { list-style: none; }
+
+    .rules-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: #444;
+      line-height: 1.55;
+      padding: 5px 0;
+    }
+
+    .rules-list li .ri { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+
+    .btn-start {
+      width: 100%;
+      background: linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%);
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      padding: 18px;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+      letter-spacing: .2px;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .btn-start:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(124,58,237,.45);
+    }
+    .btn-start:active { transform: translateY(0); }
+
+    /* ───── QUIZ ───── */
+    #screen-quiz {
+      display: none;
+      min-height: 100vh;
+      padding: 28px 20px 52px;
+    }
+
+    .quiz-top {
+      max-width: 880px;
+      margin: 0 auto 22px;
+    }
+
+    .progress-track {
+      background: #dddaf5;
+      border-radius: 100px;
+      height: 8px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg,#4f46e5,#7c3aed);
+      border-radius: 100px;
+      transition: width .5s cubic-bezier(.4,0,.2,1);
+    }
+
+    .quiz-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .meta-count { font-size: 13px; font-weight: 600; color: #777; }
+    .meta-count em { color: #4f46e5; font-style: normal; font-weight: 800; }
+
+    .partner-chip {
+      background: linear-gradient(135deg,#4f46e5,#7c3aed);
+      color: #fff;
+      border-radius: 20px;
+      padding: 5px 16px;
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+
+    .quiz-prompt {
+      text-align: center;
+      font-size: 17.5px;
+      font-weight: 700;
+      color: #333;
+      margin: 0 auto 24px;
+      max-width: 880px;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 600px) {
+      .cards-grid { grid-template-columns: 1fr; }
+      .splash-card { padding: 36px 24px 32px; }
+      .splash-title { font-size: 30px; }
+    }
+
+    .option-card {
+      background: #fff;
+      border-radius: 22px;
+      padding: 28px 28px 32px;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, opacity .2s ease;
+      box-shadow: 0 2px 16px rgba(0,0,0,.07);
+      position: relative;
+      animation: cardIn .3s ease;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .option-card:hover {
+      border-color: #7c3aed;
+      transform: translateY(-5px);
+      box-shadow: 0 14px 40px rgba(124,58,237,.18);
+    }
+
+    .option-card.winner {
+      border-color: #10b981;
+      background: #f0fdf8;
+      transform: translateY(-5px);
+      box-shadow: 0 14px 40px rgba(16,185,129,.22);
+      pointer-events: none;
+    }
+
+    .option-card.loser {
+      opacity: .3;
+      transform: none;
+      pointer-events: none;
+    }
+
+    .option-card.frozen { pointer-events: none; }
+
+    .card-tick {
+      position: absolute;
+      top: 18px; right: 20px;
+      width: 30px; height: 30px;
+      background: #10b981;
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+    }
+    .option-card.winner .card-tick { display: flex; }
+
+    .option-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ede9ff;
+      color: #6d28d9;
+      border-radius: 9px;
+      padding: 5px 13px;
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .9px;
+      margin-bottom: 18px;
+    }
+    .option-card.winner .option-tag { background: #dcfce7; color: #15803d; }
+
+    .pn-title {
+      font-size: 16.5px;
+      font-weight: 800;
+      line-height: 1.45;
+      margin-bottom: 12px;
+      color: #111;
+    }
+
+    .pn-body {
+      font-size: 14.5px;
+      line-height: 1.68;
+      color: #555;
+    }
+
+    /* ───── RESULTS ───── */
+    #screen-results {
+      display: none;
+      min-height: 100vh;
+      background: linear-gradient(145deg,#4f46e5 0%,#7c3aed 55%,#a855f7 100%);
+      padding: 40px 20px;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .results-card {
+      background: #fff;
+      border-radius: 28px;
+      padding: 46px 40px;
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 32px 80px rgba(79,70,229,.3);
+      margin: auto;
+      animation: cardIn .4s ease;
+    }
+
+    @media (max-width: 560px) {
+      .results-card { padding: 36px 24px; }
+    }
+
+    .results-hd { text-align: center; margin-bottom: 32px; }
+    .results-emoji { font-size: 52px; display: block; margin-bottom: 12px; }
+    .results-title { font-size: 30px; font-weight: 900; color: #111; margin-bottom: 6px; }
+    .results-sub { color: #999; font-size: 14px; }
+
+    .model-row { margin-bottom: 22px; }
+
+    .model-row-hd {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 9px;
+    }
+
+    .model-name-wrap {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #222;
+    }
+
+    .m-dot {
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .model-pct {
+      font-size: 24px;
+      font-weight: 900;
+      color: #111;
+    }
+
+    .bar-track {
+      background: #ede9ff;
+      border-radius: 100px;
+      height: 13px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 100px;
+      width: 0%;
+      transition: width 1.3s cubic-bezier(.16,1,.3,1);
+    }
+
+    .bar-gemini  { background: linear-gradient(90deg,#4285f4,#34a853); }
+    .bar-claude  { background: linear-gradient(90deg,#d97706,#fbbf24); }
+    .bar-chatgpt { background: linear-gradient(90deg,#059669,#34d399); }
+
+    .winner-banner {
+      background: linear-gradient(135deg,#4f46e5,#7c3aed);
+      border-radius: 20px;
+      padding: 22px 26px;
+      text-align: center;
+      color: #fff;
+      margin: 28px 0;
+    }
+
+    .winner-eye {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      opacity: .75;
+      margin-bottom: 8px;
+    }
+
+    .winner-nm { font-size: 26px; font-weight: 900; }
+    .winner-detail { font-size: 13px; opacity: .72; margin-top: 5px; }
+
+    .share-box {
+      background: #f8f7ff;
+      border: 1.5px solid #e9e6ff;
+      border-radius: 18px;
+      padding: 24px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .share-icon { font-size: 36px; display: block; margin-bottom: 10px; }
+
+    .share-text {
+      font-size: 14.5px;
+      color: #555;
+      line-height: 1.65;
+    }
+    .share-text strong { color: #4f46e5; }
+
+    .btn-restart {
+      width: 100%;
+      background: #ede9ff;
+      color: #4f46e5;
+      border: none;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .15s;
+    }
+    .btn-restart:hover { background: #e0d9ff; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ SPLASH ═══════════════════════════ -->
+<div id="screen-splash">
+  <div class="splash-card">
+    <span class="splash-logo">⚡</span>
+    <div class="splash-badge">yuu Rewards Club</div>
+    <h1 class="splash-title">PN Battle</h1>
+    <p class="splash-sub">Which push notification copy makes you want to tap? Help us find out which AI writes the best yuu push notifications — no idea who wrote what until the end!</p>
+    <div class="rules-box">
+      <div class="rules-label">How it works</div>
+      <ul class="rules-list">
+        <li><span class="ri">🎯</span><span>You'll see <strong>30 rounds</strong>, each showing 2 push notification copies for the same campaign</span></li>
+        <li><span class="ri">👆</span><span>Tap the copy you'd <strong>actually want to receive</strong> — it auto-advances to the next round</span></li>
+        <li><span class="ri">🎭</span><span>The AI model behind each copy is <strong>hidden</strong> — pick purely on quality</span></li>
+        <li><span class="ri">📊</span><span>At the end, see a full <strong>breakdown</strong> of your AI preference</span></li>
+      </ul>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">Let's Battle ⚡</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ QUIZ ═══════════════════════════ -->
+<div id="screen-quiz">
+  <div class="quiz-top">
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <div class="quiz-meta">
+      <div class="meta-count">Round <em id="q-num">1</em> of 30</div>
+      <div class="partner-chip" id="partner-chip">—</div>
+    </div>
+  </div>
+  <div class="quiz-prompt">Which push notification would you rather receive? 👇</div>
+  <div class="cards-grid" id="cards-grid"></div>
+</div>
+
+<!-- ═══════════════════════════ RESULTS ═══════════════════════════ -->
+<div id="screen-results">
+  <div class="results-card">
+    <div class="results-hd">
+      <span class="results-emoji">🏆</span>
+      <h2 class="results-title">Your Results</h2>
+      <p class="results-sub">Based on your 30 choices</p>
+    </div>
+    <div id="model-results"></div>
+    <div class="winner-banner">
+      <div class="winner-eye">🥇 Your Top Pick</div>
+      <div class="winner-nm" id="winner-nm">—</div>
+      <div class="winner-detail" id="winner-detail"></div>
+    </div>
+    <div class="share-box">
+      <span class="share-icon">📸</span>
+      <p class="share-text">
+        <strong>Screenshot this and share in Slack!</strong><br>
+        Let the team know which AI style you vibed with most 🙌
+      </p>
+    </div>
+    <button class="btn-restart" onclick="restartQuiz()">↺ &nbsp;Play Again</button>
+  </div>
+</div>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────
+// Model index: 0 = Gemini (Model 1), 1 = Claude (Model 2), 2 = ChatGPT (Model 3)
+// Variant index: 0=B, 1=C, 2=D, 3=E  (ChatGPT only has 0-2)
+const MODEL_LABELS  = ['Model 1', 'Model 2', 'Model 3'];
+const MODEL_CLASSES = ['gemini', 'claude', 'chatgpt'];
+const MODEL_DOTS    = ['#4285f4', '#d97706', '#10b981'];
+const MEDALS        = ['', '', ''];
+
+// ─── DATA ─────────────────────────────────────────────────
+const DATA = [{"partner": "Jolibox", "models": [[{"title": "🎬 Jolibox: Earn 100 Points!", "body": "Game on! 🦦 Watch Jolibox to earn up to 100 Points, plus 30 days ad-free for new users. Let's binge together! 🍿"}, {"title": "30 Days Ad-Free on Jolibox", "body": "Catch new dramas and earn up to 100 Points this January. Tap to start watching!"}, {"title": "Earn 100 Points with Jolibox", "body": "Watch episodes and check in for 3 days to earn Points, plus 30 days ad-free. Tap to play!"}, {"title": "Your 2026 Jolibox Wrapped", "body": "Start your year of dramas right. Earn up to 100 Points and 30 days ad-free. Tap to watch!"}], [{"title": "🎬 New Dramas + Points on yuu TV!", "body": "Yuuki here! 🦦 Watch one episode on yuu TV to earn 50 Points, check in 3 days in a row for another 50 BONUS Points, and new Members enjoy 30 days of ad-free unlimited dramas. January only — let's binge together! 🍿"}, {"title": "🎬 Jolibox Dramas Are Now on yuu TV!", "body": "Earn 50 Points per episode and 50 BONUS Points for 3-day check-ins. New Members: 30 days of ad-free, unlimited dramas — FREE this January."}, {"title": "🎬 New Year Dramas: Watch & Earn!", "body": "Every episode on Jolibox earns 50 Points. Check in 3 consecutive days for another 50 BONUS Points. New Members: 30 days ad-free FREE. January only."}, {"title": "🎬 New Dramas Just Dropped on yuu TV", "body": "Jolibox's January lineup is here — earn 50 Points per episode and 50 BONUS Points for 3 consecutive check-ins. New Members: 30 days ad-free FREE."}], [{"title": "🎬 Watch & Earn Points Tonight!", "body": "Yuuki’s got drama time for you! 🦦 Watch 1 episode, earn 50 Points 🎁 + 3-day check-ins for 50 more 📅 New? Enjoy 30 days ad-free! Let’s binge!"}, {"title": "Watch 1 Episode, Get 50 Points", "body": "Start on Jolibox — earn 50 Points per episode + bonus for 3-day check-ins. New users enjoy 30 days ad-free."}, {"title": "100 Points Just For Watching", "body": "Watch on Jolibox & earn 50 Points + 50 more with 3-day check-ins. New users get 30 days ad-free."}]]}, {"partner": "Giant", "models": [[{"title": "🎉 Giant: $6 Return Voucher!", "body": "Yuuki's got savings for you! 🦦 Spend $60 with CDC Vouchers to get a $6 return voucher. Let's shop! 🛍️"}, {"title": "Claim Your $6 Giant Voucher", "body": "Get a $6 return voucher when you spend $60 with your CDC or SG60 Vouchers. Tap to view!"}, {"title": "$6 Off Your Next Giant Run", "body": "Spend $60 using CDC or SG60 Vouchers and receive a $6 return voucher. Tap for details!"}, {"title": "Girl Math: Free $6 at Giant", "body": "Spending $60 with CDC vouchers gets you a $6 return voucher. Basically free money! Tap to shop."}], [{"title": "🎉 $6 Return Voucher at Giant!", "body": "Yuuki here! 🦦 Spend a minimum of $60 at Giant with your CDC or SG60 Vouchers and get a $6 return voucher for your next visit. Till 9 Jan only — let's save together! 🛒"}, {"title": "Spend $60, Get $6 Back at Giant 🛒", "body": "Use your CDC or SG60 Vouchers at Giant — hit $60 and get a $6 return voucher for your next visit. Till 9 Jan. Stack your savings!"}, {"title": "🛒 SG60 Vouchers Go Furthest at Giant!", "body": "Spend $60 at Giant with your CDC or SG60 Vouchers before 9 Jan and get a $6 return voucher for your next visit. Best value this week."}, {"title": "🎉 Make Your SG60 Vouchers Work Harder", "body": "Spend $60 at Giant using your CDC or SG60 Vouchers and pocket a $6 return voucher on top. Your vouchers just went further. Till 9 Jan!"}], [{"title": "🛒 $6 Back On Your Grocery Run!", "body": "Yuuki’s got savings for you! 🦦 Spend $60 with CDC vouchers at Giant & enjoy a $6 return voucher 🎉 Let’s stock up!"}, {"title": "$6 Voucher With CDC Spend", "body": "Spend $60 at Giant with CDC vouchers & get a $6 return voucher for your next shop."}, {"title": "Turn $60 Into $66 At Giant", "body": "Use CDC vouchers at Giant — spend $60 & get $6 back for your next visit."}]]}, {"partner": "FCA", "models": [[{"title": "🏊‍♂️ FCA: 10% OFF Swim Lessons!", "body": "Ready to splash? 🦦 Save up to 10% with Member rates and earn Points. Let's swim! 💦"}, {"title": "10% OFF Fitness Champs Lessons", "body": "Build water confidence for all ages while saving 10% with Member rates. Tap to sign up!"}, {"title": "Member Rates for Swim Lessons", "body": "Save up to 10% at Fitness Champs and earn yuu Points on lessons for all ages. Tap to book!"}, {"title": "In Your Swimming Era 🏊", "body": "Start the year right! Save up to 10% on FCA swim lessons and earn Points. Tap to dive in!"}], [{"title": "🏅 Swim More, Earn More at Fitness Champs!", "body": "Yuuki's got a splash-tastic deal for you! 🦦 Save up to 10% with Member rates at Fitness Champs and earn yuu Points while building water confidence for all ages. Let's dive in together! 🌊"}, {"title": "Fitness Champs Swim Lessons From $X Less", "body": "Enrol today with Member rates at Fitness Champs and earn yuu Points — building water confidence for every age. Tap to sign up!"}, {"title": "🏊 January Swim Goals Start at Fitness Champs", "body": "Meet your 2026 fitness resolutions! Earn yuu Points and save up to 10% with Member rates on trusted swim lessons for all ages."}, {"title": "🏊 New Year Swim Goals? Fitness Champs Has yuu", "body": "Hey friend! 🦦 January is the best time to start — join swim lessons at Fitness Champs, earn yuu Points and save 10% with Member rates. Let's go!"}], [{"title": "🏊 Save On Swim Lessons Today!", "body": "Yuuki’s got something for you! 🦦 Enjoy up to 10% OFF at FCA & earn yuu Points while building water confidence. Let’s dive in!"}, {"title": "Save 10% On FCA Swim Lessons", "body": "Join FCA swim classes with Member rates & earn yuu Points while building water confidence."}, {"title": "Build Skills, Earn Rewards", "body": "Enrol in FCA swim lessons & enjoy Member savings + yuu Points while you learn."}]]}, {"partner": "Prime Survey", "models": [[{"title": "💡 Prime Survey: Earn 300 Points!", "body": "Guess what? 🦦 Answer short Prime Surveys to earn up to 300 FREE Points. Let's start tapping! 📱"}, {"title": "300 FREE Points with Prime Survey", "body": "Answer short questions to earn up to 300 Points. Complete your profile for better matches. Tap to start!"}, {"title": "Your Quick Survey Points", "body": "Earn up to 300 Points easily by answering short Prime Surveys. Tap to begin earning!"}, {"title": "We're Members, Of Course We...", "body": "Take short Prime Surveys to earn up to 300 FREE Points. Tap to complete your profile!"}], [{"title": "💡 Turn Your Opinions into yuu Points!", "body": "Yuuki here! 🦦 Answer short surveys with Prime Surveys and earn up to 300 FREE yuu Points. New? Start with a quick profiling survey to get matches you'll love. Let's earn together! 🎯"}, {"title": "Answer a Survey. Earn 300 yuu Points Free", "body": "Prime Surveys pays you in yuu Points — short surveys, fast rewards. Start with a profiling survey to get matched to topics you care about."}, {"title": "💡 Free yuu Points for Your Opinion — Really", "body": "Prime Surveys gives you up to 300 yuu Points just for answering short surveys. New? Do a quick profiling survey for better matches. Tap to start!"}, {"title": "💰 Ang Bao Season? Earn Points Too!", "body": "Earn up to 300 FREE yuu Points just by answering short surveys on Prime Surveys. Every little bit adds up — start with a profiling survey today!"}], [{"title": "💡 Earn 300 Points From Surveys!", "body": "Yuuki’s got easy Points for you! 🦦 Answer quick surveys & earn up to 300 Points 🎁 Start with profiling to earn more easily!"}, {"title": "Earn 300 Points From Surveys", "body": "Complete short surveys with Prime Survey & earn yuu Points. Start with profiling for better matches."}, {"title": "Get Points For Your Opinions", "body": "Share your views on Prime Survey & earn yuu Points. Start with profiling to unlock more surveys."}]]}, {"partner": "Suntec", "models": [[{"title": "🧧 Suntec: LNY Plushie Fun!", "body": "Yuuki here! 🦦 Enjoy baking tarts and roasting bakkwa at Suntec City Atrium. Let's celebrate! 🍍"}, {"title": "Bake Pineapple Tarts at Suntec", "body": "Join the Lunar New Year festivities at Suntec City Atrium for hands-on baking and bakkwa roasting. Tap to view!"}, {"title": "Lunar New Year at Suntec City", "body": "Head to Towers 1 & 2 for hands-on pineapple tart baking and bakkwa roasting. Tap to join!"}, {"title": "Serving LNY Atrium Vibes", "body": "Skip the prep and head to Suntec City for hands-on pineapple tart baking. Tap to discover!"}], [{"title": "🧧 Festive Fun Awaits at Suntec City!", "body": "Hey friend! 🦦 Bake pineapple tarts, roast bakkwa and enjoy hands-on CNY fun at Suntec City Atrium (Towers 1 & 2). Let's celebrate together! 🎊"}, {"title": "🐎 Toss Lo Hei at Suntec City This CNY!", "body": "Join the Year of the Horse festivities at Suntec City Atrium — live yusheng toss, CNY workshops and more await. Tap to explore!"}, {"title": "🧧 Hands-On CNY Workshops at Suntec City!", "body": "Bake pineapple tarts & roast bakkwa at Suntec City Atrium (Towers 1 & 2). Earn yuu Points while you celebrate! Tap to find out more."}, {"title": "🐎 New Year, New Outfit — Shop Suntec City!", "body": "CNY shopping szn is here! Score your new year look and earn yuu Points at Suntec City. Let's usher in the Year of the Horse in style! 👗"}], [{"title": "🧧 Bake & Celebrate At Suntec!", "body": "Yuuki’s got festive fun for you! 🦦 Try pineapple tart baking & bakkwa activities at Suntec City Atrium 🎉 Let’s celebrate!"}, {"title": "Bake Pineapple Tarts At Suntec", "body": "Try hands-on baking & festive activities at Suntec City Atrium this Lunar New Year."}, {"title": "Try Festive Baking This Weekend", "body": "Join hands-on baking & bakkwa experiences at Suntec City Atrium."}]]}, {"partner": "Guardian", "models": [[{"title": "🧧 Guardian: $5 OFF Abalone!", "body": "Hey friend! 🦦 Get $5 OFF Skylight or New Moon Abalone Sets in-store. Let's feast together! 🍲"}, {"title": "$5 OFF Abalone at Guardian", "body": "Upgrade your reunion dinner with $5 OFF Skylight and New Moon Abalone sets. Tap to redeem!"}, {"title": "Guardian Reunion Dinner Sets", "body": "Grab your Skylight or New Moon Abalone sets in-store and enjoy $5 OFF. Tap for your voucher!"}, {"title": "Loud Budgeting This CNY 🧧", "body": "Keep the feast, cut the cost. Get $5 OFF Abalone Sets at Guardian. Tap to redeem!"}], [{"title": "🍽️ Level Up Your Reunion Feast with Guardian!", "body": "Yuuki's got a treat for you! 🦦 Grab the Skylight / New Moon Abalone Set at Guardian and enjoy $5 OFF in-store. Tap to redeem your voucher! 🧧"}, {"title": "🧡 Guardian's Reunion Feast Deal: $5 OFF!", "body": "Make your CNY reunion dinner extra special — pick up the Skylight / New Moon Abalone Set at Guardian in-store for $5 OFF. Tap to redeem!"}, {"title": "🧧 Your CNY Abalone Set Is Waiting at Guardian", "body": "Skylight / New Moon Abalone Set — now $5 OFF in-store at Guardian. Perfect for your reunion feast. Tap to grab your voucher now!"}, {"title": "🍜 Reunion Dinner Sorted! Guardian's $5 OFF", "body": "Guardian's got your reunion feast covered — grab the Skylight / New Moon Abalone Set in-store with $5 OFF. Tap to redeem your voucher! 🧧"}], [{"title": "🧧 $5 OFF Abalone Sets!", "body": "Yuuki’s got something tasty! 🦦 Enjoy $5 OFF Skylight / New Moon Abalone Sets at Guardian 😋 Let’s feast!"}, {"title": "$5 OFF Abalone At Guardian", "body": "Pick up Skylight / New Moon Abalone Sets & enjoy $5 OFF in-store at Guardian."}, {"title": "Abalone Deals For Your Feast", "body": "Enjoy $5 OFF Skylight / New Moon Abalone Sets at Guardian this festive season."}]]}, {"partner": "Mandai", "models": [[{"title": "🐎 Mandai: 20% OFF Admission!", "body": "Ready to explore? 🦦 Enjoy up to 20% OFF Mandai Wildlife Reserve tickets. Let's go wild! 🌿"}, {"title": "20% OFF Mandai Park Admission", "body": "Celebrate the New Year with up to 20% OFF tickets to Mandai Wildlife Reserve. Tap to book!"}, {"title": "See The Animals at Mandai", "body": "Enjoy up to 20% OFF your Mandai Wildlife Reserve park admission. Tap to plan your visit!"}, {"title": "Our Roman Empire is Mandai", "body": "Thinking about the animals? Enjoy up to 20% OFF Mandai Wildlife Reserve admission. Tap to visit!"}], [{"title": "🐴 Gallop into a Horse-picious New Year!", "body": "Ready to celebrate? 🦦 Head to Mandai Wildlife Reserve and enjoy UP TO 20% OFF park admission this CNY! Let's gallop in together! 🎉"}, {"title": "CNY Fun at Mandai: 20% OFF Tickets", "body": "Ring in the Year of the Horse at Mandai Wildlife Reserve! Enjoy UP TO 20% OFF park admission this CNY. Tap to grab your tickets now!"}, {"title": "🐴 Year of the Horse at Mandai!", "body": "Celebrate CNY with the animals! Mandai Wildlife Reserve is offering UP TO 20% OFF park admission — perfect for the whole family. Tap to book!"}, {"title": "🐴 CNY Zoo Trip? Mandai Has 20% OFF!", "body": "Everyone's planning their CNY outing! 🐾 Mandai Wildlife Reserve has UP TO 20% OFF park admission. Tap to book before the queues fill up! 🎊"}], [{"title": "🐾 20% OFF Mandai Tickets!", "body": "Yuuki’s got a day out for you! 🦦 Enjoy up to 20% OFF at Mandai Wildlife Reserve 🎉 Let’s explore!"}, {"title": "20% OFF Mandai Admission", "body": "Visit Mandai Wildlife Reserve & enjoy up to 20% OFF park tickets this festive season."}, {"title": "Plan Your Mandai Visit For Less", "body": "Enjoy up to 20% OFF tickets to Mandai Wildlife Reserve."}]]}, {"partner": "KrisFlyer", "models": [[{"title": "🎁 Your March Bonus has Arrived!", "body": "Refresh your yuu balance! 💎 Get 20% MORE Points when you convert your KrisFlyer miles to yuu Points today. Perfect for your daily grocery runs and food deliveries! 🛒🐼"}, {"title": "✈️ KrisFlyer: 20% Bonus Points!", "body": "Yuuki's got a bonus for you! 🦦 Convert KrisFlyer miles to get 20% MORE yuu Points. Let's redeem! 💎"}, {"title": "Get 20% Bonus yuu Points", "body": "Convert your KrisFlyer miles to yuu Points today and enjoy a 20% bonus for your daily groceries. Tap to convert!"}, {"title": "Earning Points is our Love Language", "body": "Convert KrisFlyer miles to yuu Points and enjoy a 20% bonus for your groceries. Tap to convert!"}], [{"title": "🛫 Miles to Points — 20% MORE This March!", "body": "Yuuki's got a bonus for you! 🦦 Convert your KrisFlyer miles to yuu Points and get 20% MORE Points — great for grocery runs and food deliveries. Let's earn together! 💎"}, {"title": "Your KrisFlyer Miles = More yuu Points!", "body": "Convert KrisFlyer miles to yuu Points and get 20% MORE Points this month! Spend at Cold Storage, Giant, 7-Eleven and more. Tap to convert now."}, {"title": "🛫 Turn Miles into Grocery Points — 20% Extra!", "body": "KrisFlyer miles don't have to stay in the sky! Convert to yuu Points this March and get 20% MORE. Use at Cold Storage, foodpanda and more. Tap to convert!"}, {"title": "🌸Not enough miles for your Japan Trip? Don't waste them!", "body": "🛫 Convert KrisFlyer miles to yuu Points and get 20% MORE this March. Use them for your daily groceries!"}], [{"title": "🎁 20% More From Your Miles!", "body": "Yuuki’s got a boost for you! 🦦 Convert KrisFlyer miles & enjoy 20% MORE yuu Points 💎 Let’s boost your balance!"}, {"title": "Get More From Your Miles", "body": "Convert KrisFlyer miles to yuu Points & enjoy 20% MORE this March."}, {"title": "Turn Miles Into Daily Rewards", "body": "Convert KrisFlyer miles & get 20% MORE yuu Points for groceries & food delivery."}]]}, {"partner": "Gojek", "models": [[{"title": "🚗 Gojek: Earn 6 Points per $1!", "body": "Game on! 🦦 Link your yuu and Gojek accounts to earn 6 Points per $1 on your first ride. Let's ride! 💨"}, {"title": "Link Gojek & Earn Extra Points", "body": "Earn 6 yuu Points per $1 spent on your first ride when you link accounts. Tap to activate!"}, {"title": "Your Gojek Link Reward", "body": "Activate your Booster to earn 6 Points per $1 on your first ride after linking. Tap to link!"}, {"title": "Working in the CBD? 🚕", "body": "Link Gojek & yuu to earn 6 Points per $1 spent on your first ride. Tap to activate the Booster!"}], [{"title": "🚕 Link Up, Earn Points on Every Ride!", "body": "Yuuki's got a deal for you! 🦦 Link your yuu & Gojek accounts and earn 6 Points per $1 on your first ride. Let's ride together!"}, {"title": "You've got Gojek rewards waiting!", "body": "Link your yuu & Gojek accounts to unlock 6 Points per $1 on your first ride. Tap to activate on the yuu App."}, {"title": "Your Gojek Booster is ready to activate", "body": "Link your yuu & Gojek accounts now and earn 6 Points per $1 on your very first ride. Start earning today!"}, {"title": "Your First Gojek Ride = Max Points", "body": "Link your yuu & Gojek accounts and earn 6 Points per $1 on your first ride. Tap to activate the Booster on the yuu App."}], [{"title": "🚕 Earn More On Your First Ride!", "body": "Yuuki’s got your ride ready! 🦦 Link yuu & Gojek, take your first ride & earn 6 Points per $1 🎉 Let’s go!"}, {"title": "Your First Gojek Ride Rewards You", "body": "Link yuu with Gojek & earn 6 Points per $1 on your first ride."}, {"title": "Link & Earn On Your First Ride", "body": "Connect yuu & Gojek accounts & earn 6 Points per $1 on your first ride."}]]}, {"partner": "Great Eastern", "models": [[{"title": "✈️ GE: 50% OFF Travel Plans!", "body": "Ready to fly? 🦦 Save 50% and more on Great Eastern single trip travel plans. Let's travel safely! 🧳"}, {"title": "Travelling this Spring? ✈️", "body": "Save 50% and more on your single trip travel insurance with Great Eastern. Tap to get covered!"}, {"title": "50% OFF GE Travel Insurance", "body": "Secure your single trip travel plan with Great Eastern and save 50% and more. Tap to buy!"}, {"title": "Ready for the Airport Reveal?", "body": "Save 50% on your Great Eastern single trip travel plan before you fly. Tap to secure it!"}], [{"title": "🌷 Spring Getaway Savings Start Here!", "body": "Hey friend! 🦦 Save 50% and more on a Great Eastern single trip travel plan this spring. Tap to get yours now! ✈️"}, {"title": "Guaranteed 50% off travel insurance this spring", "body": "Get a Great Eastern single trip travel plan at half price — guaranteed. Tap to get yours before your next getaway."}, {"title": "Easter trip booked? Cover it with GE", "body": "Save 50% and more on a single trip travel plan from Great Eastern. Protect your Easter getaway — tap to get yours now."}, {"title": "Sakura season calling? GE's got your cover", "body": "Save 50% and more on a Great Eastern single trip travel plan for Japan. Your spring adventure, sorted. Tap to get yours now."}], [{"title": "✈️ Save 50% On Travel Plans!", "body": "Yuuki’s got you covered! 🦦 Enjoy 50% OFF single trip travel plans with Great Eastern 🌷 Let’s travel worry-free!"}, {"title": "Save 50% On Travel Insurance", "body": "Get your Great Eastern single trip plan & enjoy 50% OFF for your next getaway."}, {"title": "Planning A Trip? Save 50%", "body": "Enjoy 50% OFF Great Eastern single trip travel plans before your next getaway."}]]}];
+
+// ─── STATE ────────────────────────────────────────────────
+let questions = [], currentQ = 0, votes = [0, 0, 0];
+
+// ─── UTILS ────────────────────────────────────────────────
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/\n/g, '<br>');
+}
+
+// ─── QUESTION GENERATION ──────────────────────────────────
+// Rules:
+//   • 15 questions total
+//   • Partners: all 10 unique first, then 5 more (all different from each other)
+//   • Model pairs: exactly 5× each of (0,1), (0,2), (1,2) → each model appears 10×
+//   • Variants MATCH across both models in every question
+//   • ChatGPT (model 2) only has variants 0-2 (B,C,D), not 3 (E)
+//   • If variant=E is selected but ChatGPT involved → variant falls back to random B-D
+function generateQuestions() {
+  const N = DATA.length; // 10
+
+  // Partner assignment: 10 unique (shuffled) + 5 distinct random
+  const first10 = shuffle([...Array(N).keys()]);
+  // 30 questions: 3 full shuffles of all 10 partners (each partner appears exactly 3×)
+  const slots = [...shuffle([...Array(N).keys()]), ...shuffle([...Array(N).keys()]), ...shuffle([...Array(N).keys()])];
+
+  // Pair pool: 10× each combination → each model appears exactly 20× across 30 questions
+  const pairPool = shuffle([
+    ...[...Array(10)].map(() => [0, 1]),
+    ...[...Array(10)].map(() => [0, 2]),
+    ...[...Array(10)].map(() => [1, 2]),
+  ]);
+
+  const qs = [];
+  for (let i = 0; i < 30; i++) {
+    const pIdx  = slots[i];
+    const [mA, mB] = pairPool[i];
+    const partner = DATA[pIdx];
+
+    // Variant selection: same index used for BOTH models (matching)
+    const chatGPTInvolved = mA === 2 || mB === 2;
+    const maxVar = chatGPTInvolved ? 2 : 3; // ChatGPT max index = 2 (Variant D)
+    const vIdx = Math.floor(Math.random() * (maxVar + 1));
+
+    const copyA = partner.models[mA][vIdx];
+    const copyB = partner.models[mB][vIdx];
+    if (!copyA || !copyB) continue; // safety guard
+
+    // Randomise which option appears as A vs B on screen
+    const swap = Math.random() < 0.5;
+    qs.push({
+      partner:  partner.partner,
+      left:  { model: swap ? mB : mA, ...(swap ? copyB : copyA) },
+      right: { model: swap ? mA : mB, ...(swap ? copyA : copyB) },
+    });
+  }
+  return qs;
+}
+
+// ─── RENDER ───────────────────────────────────────────────
+function renderQuestion() {
+  const q    = questions[currentQ];
+  const pct  = (currentQ / 30) * 100;
+
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('q-num').textContent = currentQ + 1;
+  document.getElementById('partner-chip').textContent = q.partner;
+
+  document.getElementById('cards-grid').innerHTML = `
+    <div class="option-card" id="card-left" onclick="pick('left')">
+      <div class="card-tick">✓</div>
+      <div class="option-tag">Option A</div>
+      <div class="pn-title">${escHtml(q.left.title)}</div>
+      <div class="pn-body">${escHtml(q.left.body)}</div>
+    </div>
+    <div class="option-card" id="card-right" onclick="pick('right')">
+      <div class="card-tick">✓</div>
+      <div class="option-tag">Option B</div>
+      <div class="pn-title">${escHtml(q.right.title)}</div>
+      <div class="pn-body">${escHtml(q.right.body)}</div>
+    </div>
+  `;
+}
+
+function pick(side) {
+  const q       = questions[currentQ];
+  const chosen  = side === 'left' ? q.left : q.right;
+  const loser   = side === 'left' ? 'right' : 'left';
+
+  votes[chosen.model]++;
+
+  document.getElementById('card-' + side).classList.add('winner', 'frozen');
+  document.getElementById('card-' + loser).classList.add('loser', 'frozen');
+
+  setTimeout(() => {
+    currentQ++;
+    if (currentQ < questions.length) renderQuestion();
+    else showResults();
+  }, 700);
+}
+
+// ─── FLOW ─────────────────────────────────────────────────
+function startQuiz() {
+  questions = generateQuestions();
+  currentQ  = 0;
+  votes     = [0, 0, 0];
+
+  document.getElementById('screen-splash').style.display = 'none';
+  document.getElementById('screen-quiz').style.display = 'block';
+  renderQuestion();
+}
+
+function showResults() {
+  document.getElementById('screen-quiz').style.display = 'none';
+  const rs = document.getElementById('screen-results');
+  rs.style.display = 'flex';
+
+  const total = votes.reduce((a,b) => a+b, 0);
+  let pcts = votes.map(v => total > 0 ? Math.round(v / total * 100) : 0);
+
+  // Fix rounding so sum = 100
+  const diff = 100 - pcts.reduce((a,b) => a+b, 0);
+  pcts[pcts.indexOf(Math.max(...pcts))] += diff;
+
+  // Always display in fixed order: Model 1, Model 2, Model 3
+  document.getElementById('model-results').innerHTML = [0,1,2].map(mi => `
+    <div class="model-row">
+      <div class="model-row-hd">
+        <div class="model-name-wrap">
+          <span class="m-dot" style="background:${MODEL_DOTS[mi]}"></span>
+          ${MODEL_LABELS[mi]}
+        </div>
+        <div class="model-pct">${pcts[mi]}%</div>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill bar-${MODEL_CLASSES[mi]}" id="bar-${mi}"></div>
+      </div>
+    </div>
+  `).join('');
+
+  const winIdx = [0,1,2].reduce((best, mi) => pcts[mi] > pcts[best] ? mi : best, 0);
+  document.getElementById('winner-nm').textContent = MODEL_LABELS[winIdx];
+  document.getElementById('winner-detail').textContent =
+    `Preferred in ${pcts[winIdx]}% of your rounds`;
+
+  // Animate bars after a tick
+  requestAnimationFrame(() => setTimeout(() => {
+    [0,1,2].forEach(mi => {
+      const el = document.getElementById('bar-' + mi);
+      if (el) el.style.width = pcts[mi] + '%';
+    });
+  }, 100));
+}
+
+function restartQuiz() {
+  document.getElementById('screen-results').style.display = 'none';
+  document.getElementById('screen-splash').style.display = 'flex';
+}
+</script>
+</body>
+</html>
